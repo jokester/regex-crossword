@@ -3,12 +3,17 @@
   %head
     %title regex-crossword
     %link(rel="stylesheet" type="text/css" href="style.css")
-    %script(src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js")
+    %link(rel="stylesheet" type="text/css" href="http://code.jquery.com/qunit/qunit-1.11.0.css")
+    %script(src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js")
+    %script(src="http://code.jquery.com/qunit/qunit-1.11.0.js")
   %body
     #mainframe
       #grid
         left-half
       #history
         right-half
+    #qunit
+    #qunit-fixture
   %script(src="crossword.js")
+  %script(src="asserts.js")
 
