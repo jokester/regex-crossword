@@ -10,7 +10,7 @@ assertEq "crossword.cellid2coor",
   @crossword.cellid2coor("cell_-1_-2_-3"),
   {x:-1,y:-2,z:-3}
 
-g = new @crossword.Grid(2)
+g = new @crossword.Grid(1)
 
 assertEq "Grid.turn",
   g.turn({x:1,y:0,z:-1}),
@@ -18,3 +18,10 @@ assertEq "Grid.turn",
 assertEq "Grid.turn",
   g.turn({x:-1,y:1,z:0}),
   {x:0,y:-1,z:1}
+
+assertEq "Grid.contains",
+  g.contains({x:-1,y:1,z:1}),
+  true
+assertEq "Grid.contains",
+  g.contains({x:-2,y:-1,z:1}),
+  false
