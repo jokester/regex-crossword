@@ -19,16 +19,27 @@ class Grid6
   # coord system
   # use a 3-component coord sys mentioned by http://keekerdc.com/2011/03/hexagon-grids-coordinate-systems-and-distance-calculations/
   constructor: (@radius) ->
-    @cells = {}
+    @cells = {}     # { {x:x, y:y} : cell }
+    @rules = [[], [], []] # [ direction: [ no: callback ] ]
     for x in [ -@radius .. +@radius ]
       for y in [ -@radius .. +@radius ]
         @set_cell(x,y,"?") if @contains( {x:x,y:y} )
+
+  add_rule: (direction, rowno, cb )=>
+    @rules[direction][rowno]=cb
+
+  cell_changed: (cellid)=>
+    p = cellid2coor( cellid )
+
   set_cell: (x,y,char) =>
     @cells[ coor2cellid( {x:x,y:y} ) ] = char
+
   distance: (p) ->
     Math.max( [ p.x, p.y, p.x+p.y ].map(Math.abs) ... )
+
   contains: (p) =>
     @distance(p) < @radius
+
   row: (p,direction) =>
     throw "not in grid" unless @contains(p)
     points = []
@@ -36,13 +47,13 @@ class Grid6
     for varing in [ -steps .. +steps ]
       new_point = $.extend( {}, p )
       switch direction
-        when "x+pi/6"
+        when 0 #"y-pi/2"
           new_point.x += varing
           # z -= varing
-        when "y+pi/6"
+        when 1 #"z-pi/2"
           new_point.x -= varing
           new_point.y += varing
-        when "z+pi/6"
+        when 2 #"x-pi/2"
           new_point.y += varing
           # z -=
       points.push( new_point ) if @contains( new_point )

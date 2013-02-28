@@ -24,11 +24,11 @@ assertEq "Grid.contains-3",
   false
 
 assertEq "Grid.row-1",
-  g.row( {x:0,y:0}, "x+pi/6" ),
+  g.row( {x:0,y:0}, 0 ),
   [ -2..2 ].map( (v) -> { x:v, y:0 } )
 assertEq "Grid.row-2",
-  g.row( {x:-1,y:1}, "y+pi/6" ),
+  g.row( {x:-1,y:1}, 1 ),
   [ -2..2 ].map( (v) -> { x:-v, y: v } )
 assertEq "Grid.row-3",
-  g.row( {x:2,y:-1}, "z+pi/6" ),
+  g.row( {x:2,y:-1}, 2 ),
   [ -2..0 ].map( (v) -> { x:2, y:v } )
