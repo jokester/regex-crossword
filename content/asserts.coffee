@@ -9,9 +9,12 @@ assertEq "crossword.coor2cellid",
 assertEq "crossword.cellid2coor",
   @crossword.cellid2coor("cell_-1_-2_-3"),
   {x:-1,y:-2,z:-3}
-assertEq "crossword.points.turn",
-  @crossword.points.turn({x:1,y:0,z:-1}),
+
+g = new @crossword.Grid(2)
+
+assertEq "Grid.turn",
+  g.turn({x:1,y:0,z:-1}),
   {x:-1,y:1,z:0}
-assertEq "crossword.points.turn",
-  @crossword.points.turn({x:-1,y:1,z:0}),
+assertEq "Grid.turn",
+  g.turn({x:-1,y:1,z:0}),
   {x:0,y:-1,z:1}
