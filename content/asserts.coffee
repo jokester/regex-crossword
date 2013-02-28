@@ -4,37 +4,31 @@ assertEq = ( desc, expected, actual ) ->
   test( desc, test_fun )
 
 assertEq "crossword.coor2cellid",
-  @crossword.coor2cellid({x:1,y:2,z:-1}),
-  "cell_1_2_-1"
+  @crossword.coor2cellid({x:1,y:2}),
+  "cell_1_2"
 assertEq "crossword.cellid2coor",
-  @crossword.cellid2coor("cell_-1_-2_-3"),
-  {x:-1,y:-2,z:-3}
+  @crossword.cellid2coor("cell_-1_-2"),
+  {x:-1,y:-2}
 
-g = new @crossword.Grid(2)
-
-assertEq "Grid.turn-1",
-  g.turn({x:1,y:0,z:-1}),
-  {x:-1,y:1,z:0}
-assertEq "Grid.turn-2",
-  g.turn({x:-2,y:1,z:1}),
-  {x:1,y:-2,z:1}
+g = new @crossword.Grid(3)
+# 3-4-5-4-3
 
 assertEq "Grid.contains-1",
-  g.contains({x:-1,y:1,z:0}),
+  g.contains({x:-1,y:1}),
   true
 assertEq "Grid.contains-2",
-  g.contains({x:1,y:-1,z:0}),
+  g.contains({x:2,y:-1}),
   true
 assertEq "Grid.contains-3",
-  g.contains({x:1,y:1,z:0}),  # not legal form
-  false
-assertEq "Grid.contains-4",
-  g.contains({x:3,y:-2,z:-1}), # out of field
+  g.contains({x:3,y:1}), # out of field
   false
 
 assertEq "Grid.row-1",
-  g.row( {x:0,y:0,z:0}, "Px" ),
-  [ -2..2 ].map( (v) -> { x:0, y:-v, z:v } )
+  g.row( {x:0,y:0}, "x+pi/6" ),
+  [ -2..2 ].map( (v) -> { x:v, y:0 } )
 assertEq "Grid.row-2",
-  g.row( {x:0,y:1,z:-1}, "Py" ),
-  [ -3..0 ].map( (v) -> { x:1+v, y:1, z:-2-v } )
+  g.row( {x:-1,y:1}, "y+pi/6" ),
+  [ -2..2 ].map( (v) -> { x:-v, y: v } )
+assertEq "Grid.row-3",
+  g.row( {x:2,y:-1}, "z+pi/6" ),
+  [ -2..0 ].map( (v) -> { x:2, y:v } )

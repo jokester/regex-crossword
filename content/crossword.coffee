@@ -4,54 +4,47 @@ return unless $
 Array.prototype.sum = ()-> @reduce( (x,y) -> x+y )
 
 coor2cellid = (p)->
-  "cell_#{p.x}_#{p.y}_#{p.z}"
+  "cell_#{p.x}_#{p.y}"
 
-cellid_regex = /^cell_(-?\d+)_(-?\d+)_(-?\d+)$/
+cellid_regex = /^cell_(-?\d+)_(-?\d+)$/
 cellid2coor = (id)->
   match = cellid_regex.exec(id)
   if match
     x: parseInt(match[1])
     y: parseInt(match[2])
-    z: parseInt(match[3])
   else
     match
 
 class Grid6
+  # coord system
+  # use a 3-component coord sys mentioned by http://keekerdc.com/2011/03/hexagon-grids-coordinate-systems-and-distance-calculations/
   constructor: (@radius) ->
     @cells = {}
     for x in [ -@radius .. +@radius ]
       for y in [ -@radius .. +@radius ]
-        z = 0-x-y
-        @set_cell(x,y,z,"?") if @contains( {x:x,y:y,z:z} )
-  set_cell: (x,y,z,char) =>
-    @cells[ coor2cellid( {x:x,y:y,z:z} ) ] = char
-  turn: (p) ->
-    # turn coord by 2pi/3, in a 3-component coord sys mentioned by http://keekerdc.com/2011/03/hexagon-grids-coordinate-systems-and-distance-calculations/
-    y: p.x
-    z: p.y
-    x: p.z
+        @set_cell(x,y,"?") if @contains( {x:x,y:y} )
+  set_cell: (x,y,char) =>
+    @cells[ coor2cellid( {x:x,y:y} ) ] = char
   distance: (p) ->
-    Math.max( [ p.x, p.y, p.z ].map(Math.abs)... )
-  legal: (p) ->
-    p.x + p.y + p.z == 0
+    Math.max( [ p.x, p.y, p.x+p.y ].map(Math.abs) ... )
   contains: (p) =>
-    @legal(p) and @distance(p)<=@radius
+    @distance(p) < @radius
   row: (p,direction) =>
     throw "not in grid" unless @contains(p)
     points = []
-    steps = 2*@radius - @distance( p )
+    steps = @radius
     for varing in [ -steps .. +steps ]
       new_point = $.extend( {}, p )
       switch direction
-        when "Px"
-          new_point.y -= varing
-          new_point.z += varing
-        when "Py"
-          new_point.z -= varing
+        when "x+pi/6"
           new_point.x += varing
-        when "Pz"
+          # z -= varing
+        when "y+pi/6"
           new_point.x -= varing
           new_point.y += varing
+        when "z+pi/6"
+          new_point.y += varing
+          # z -=
       points.push( new_point ) if @contains( new_point )
     points
 
