@@ -67,3 +67,22 @@ assertEq "Grid.lineStr-3",
 assertEq "Grid.lineStr-4",
   g.lineStr("/", -2 ),
   "Y??"
+
+callbacks_invoked = []
+cb = (a,b) -> callbacks_invoked.push [a,b]
+for dir in ["-","\\","/"]
+  for lineno in [-3..3]
+    g.when_line_changed(dir,lineno,cb)
+
+g.change_cell("cell_1_0","#")
+
+assertEq "Grid.change_cell really changes cb",
+  g.lineStr("-", 0 ),
+  "???#Y"
+assertEq "Grid.change_cell calls cb",
+  callbacks_invoked,
+  [
+    [ "-", 0 ]
+    [ "\\", 1 ]
+    [ "/", -1 ]
+  ]

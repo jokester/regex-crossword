@@ -15,6 +15,7 @@ cellid2coor = (id)->
   else
     match
 
+legal_directions = ["-","\\","/"]
 class Grid6
   # coord system
   # 3-component coord sys, as mentioned by
@@ -46,18 +47,26 @@ class Grid6
       for y in [ -@radius .. +@radius ]
         @set_cell(x,y,"?") if @contains( {x:x,y:y} )
 
-  add_rule: (direction, lineno, cb )=>
-    @rules[direction][lineno]=cb
+  when_line_changed: ( direction, lineno, cb ) =>
+    @rules[direction][lineno] = cb
 
-  cell_changed: (cellid)=>
-    p = cellid2coor( cellid )
-
+  line_changed: (direction, lineno)=>
+    cb = @rules[direction][lineno]
+    cb(direction,lineno) if cb
 
   set_cell: (x,y,char) =>
     @cells[x] = @cells[x] or {}
     @cells[x][y] = char
   get_cell: (x,y) =>
     @cells[x][y]
+
+  change_cell: (cellid,char) =>
+    p = cellid2coor(cellid)
+    throw "invalid cellid" unless p
+    return if char == @get_cell(p.x,p.y)
+    @set_cell( p.x, p.y, char )
+    for direction in legal_directions
+      @line_changed( direction, @lineNo(direction,p) )
 
   distance: (p) ->
     Math.max( [ p.x, p.y, p.x+p.y ].map(Math.abs) ... )
