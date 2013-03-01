@@ -17,7 +17,18 @@ cellid2coor = (id)->
 
 class Grid6
   # coord system
-  # use a 3-component coord sys mentioned by http://keekerdc.com/2011/03/hexagon-grids-coordinate-systems-and-distance-calculations/
+  # 3-component coord sys, as mentioned by
+  #   >> http://keekerdc.com/2011/03/hexagon-grids-coordinate-systems-and-distance-calculations/
+  # cell in hex grid are denoted by <x,y> pair ( redudant z is not used )
+  #
+  # a hex grid with radius=2 is like
+  #     -1,1  0,1
+  #   -1,0  0,0  1,0
+  #      0,-1  1,-1
+  #
+  # direction 0 := y = Const        unit vector <1,0>
+  #           1 := -z= Const = x+y              <-1,1>
+  #           2 := x = Const                    <0,-1>
   constructor: (@radius) ->
     @cells = {}     # { {x:x, y:y} : cell }
     @rules = [[], [], []] # [ direction: [ no: callback ] ]
@@ -47,13 +58,13 @@ class Grid6
     for varing in [ -steps .. +steps ]
       new_point = $.extend( {}, p )
       switch direction
-        when 0 #"y-pi/2"
+        when 0
           new_point.x += varing
           # z -= varing
-        when 1 #"z-pi/2"
+        when 1
           new_point.x -= varing
           new_point.y += varing
-        when 2 #"x-pi/2"
+        when 2
           new_point.y += varing
           # z -=
       points.push( new_point ) if @contains( new_point )
