@@ -1,4 +1,4 @@
-return unless $
+return unless $ or $=jQuery
 
 # monkey patches
 Array.prototype.sum = ()-> @reduce( (x,y) -> x+y )
@@ -16,6 +16,7 @@ cellid2coor = (id)->
     match
 
 legal_directions = ["-","\\","/"]
+check_direction = (dir)-> dir in legal_directions or throw "illegal direction:#{dir}"
 class Grid6
   # coord system
   # 3-component coord sys, as mentioned by
@@ -75,6 +76,7 @@ class Grid6
     @distance(p) < @radius
 
   lineNo: (direction,p) =>
+    check_direction(direction)
     switch direction
       when "-"
         return -p.y
@@ -82,12 +84,10 @@ class Grid6
         return -p.x
       when '\\'
         return p.x+p.y
-      else
-        raise "illegal direction #{direction}"
 
   line: (direction,lineNo) =>
     throw "not in grid" unless Math.abs(lineNo) < @radius
-    throw "illigal direction" unless direction in ["-", "/", "\\"]
+    check_direction( direction )
     new_point = switch direction
       when "-"  then (v)->{x:v, y:-lineNo  }
       when "\\" then (v)->{x:-v, y:lineNo+v}
