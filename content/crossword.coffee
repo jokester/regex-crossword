@@ -98,6 +98,13 @@ class Grid6
   lineStr: (direction, lineNo) =>
     (@get_cell(p.x,p.y) for p in @line(direction,lineNo) ).join("")
 
+class Krossword
+  # - draw html
+  # - set callback
+  # - 
+  constructor: ( parent, @radius, rules )->
+
+
 @crossword =
   coor2cellid: coor2cellid
   cellid2coor: cellid2coor
