@@ -42,3 +42,28 @@ assertEq "Grid.line-2",
 assertEq "Grid.line-3",
   g.line( "/", -2 ),
   ( {x:2, y:-v} for v in [0..2] )
+
+g.set_cell(1,1,"X")
+g.set_cell(2,0,"Y")
+###
+        ? ? ?
+       ? ? ? X
+      ? ? ? ? Y
+       ? ? ? ?
+        ? ? ?
+###
+assertEq "Grid.set_cell",
+  g.get_cell(1,1),
+  "X"
+assertEq "Grid.lineStr-1",
+  g.lineStr("-", 0 ),
+  "????Y"
+assertEq "Grid.lineStr-2",
+  g.lineStr("\\", 2 ),
+  "YX?"
+assertEq "Grid.lineStr-3",
+  g.lineStr("/", -1 ),
+  "X???"
+assertEq "Grid.lineStr-4",
+  g.lineStr("/", -2 ),
+  "Y??"

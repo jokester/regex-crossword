@@ -37,7 +37,7 @@ class Grid6
   #               <1,0>  -- <0,1>   has direction="\", lineno=0
   #
   constructor: (@radius) ->
-    @cells = {}     # { {x:x, y:y} : cell }
+    @cells = {}   # { x: { y: char } }
     @rules =   # { direction: { lineno: callback } }
       "-" : {}
       "/" : {}
@@ -52,10 +52,12 @@ class Grid6
   cell_changed: (cellid)=>
     p = cellid2coor( cellid )
 
+
   set_cell: (x,y,char) =>
-    @cells[ coor2cellid( {x:x,y:y} ) ] = char
+    @cells[x] = @cells[x] or {}
+    @cells[x][y] = char
   get_cell: (x,y) =>
-    "#"
+    @cells[x][y]
 
   distance: (p) ->
     Math.max( [ p.x, p.y, p.x+p.y ].map(Math.abs) ... )
@@ -81,9 +83,11 @@ class Grid6
       when "-"  then (v)->{x:v, y:-lineNo  }
       when "\\" then (v)->{x:-v, y:lineNo+v}
       when "/"  then (v)->{x:-lineNo, y:-v }
-
     steps = @radius-Math.abs(lineNo)+1
     (p for p in [ -steps .. +steps ].map( new_point ) when @contains(p) )
+
+  lineStr: (direction, lineNo) =>
+    (@get_cell(p.x,p.y) for p in @line(direction,lineNo) ).join("")
 
 @crossword =
   coor2cellid: coor2cellid
