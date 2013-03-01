@@ -13,22 +13,32 @@ assertEq "crossword.cellid2coor",
 g = new @crossword.Grid(3)
 # 3-4-5-4-3
 
+assertEq "Grid.lineNo",
+  g.lineNo("-", {x:-1, y:1}),
+  -1
+assertEq "Grid.lineNo",
+  g.lineNo("\\", {x:-1, y:1}),
+  0
+assertEq "Grid.lineNo",
+  g.lineNo("/", {x:1, y:1}),
+  -1
+
 assertEq "Grid.contains-1",
   g.contains({x:-1,y:1}),
   true
 assertEq "Grid.contains-2",
-  g.contains({x:2,y:-1}),
+  g.contains({x:0,y:-1}),
   true
 assertEq "Grid.contains-3",
-  g.contains({x:3,y:1}), # out of field
+  g.contains({x:1,y:2}), # out of field
   false
 
-assertEq "Grid.row-1",
-  g.row( {x:0,y:0}, 0 ),
-  ( {x:v, y:0} for v in [-2..2])
-assertEq "Grid.row-2",
-  g.row( {x:-1,y:1}, 1 ),
-  ( {x:-v, y:v} for v in [-2..2] )
-assertEq "Grid.row-3",
-  g.row( {x:2,y:-1}, 2 ),
-  ( {x:2, y:v} for v in [-2..0] )
+assertEq "Grid.line-1",
+  g.line( "-", 0 ),
+  ( {x:v, y:0} for v in [-2..2] )
+assertEq "Grid.line-2",
+  g.line( "\\", 1 ),
+  ( {x:2-v, y:-1+v} for v in [0..3] )
+assertEq "Grid.line-3",
+  g.line( "/", -2 ),
+  ( {x:2, y:-v} for v in [0..2] )
