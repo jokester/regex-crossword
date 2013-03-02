@@ -105,6 +105,8 @@ class Krossword
   constructor: ( parent, @radius, rules )->
 
 
+if grid=$("#krossword-grid")
+  console.log "found"
 @crossword =
   coor2cellid: coor2cellid
   cellid2coor: cellid2coor
