@@ -1,13 +1,30 @@
-#mainframe
-
 #krossword-grid
   height: 600px
-  width: 600px
+  width:  600px
   border: 1px dotted red
   position: absolute
 
 #grid
   width: 600px
 
-#history
-  width: 300px
+.hidden
+  display: none
+
+div.cell
+  position: absolute
+  font-family: monospace
+  .cell-bg
+    position: absolute
+    color: lightblue
+  .cell-text
+    position: absolute
+  .cell-input
+    position: absolute
+
+
+.rot120
+  -webkit-transform: rotate(-120deg)
+.rot240
+  -webkit-transform: rotate(-240deg)
+.rot0
+  -webkit-transform: rotate(0deg)
