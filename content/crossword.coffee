@@ -43,7 +43,7 @@ class Grid6
   #   -2,1  -1,1  0,1  1,1
   # -2,0  -1,0  0,0  1,0  2,0
   #   -1,-1  0,-1  1,-1  2,-1
-  #        0,-2   1,-2  2,-2
+  #      0,-2   1,-2  2,-2
   #
   # direction - := y = Const        unit vector <1,0>     Const = -lineNo
   #           \ := -z= Const = x+y              <-1,1>             lineNo
@@ -115,10 +115,9 @@ class Grid6
 class Krossword
   # - draw html
   # - set callback
-  constructor: ( parent, @radius, rules )->
+  constructor: ( parent, @radius, @rules )->
     @grid = new Grid6( @radius )
     parent.append( @draw_table() )
-
 
   draw_table: ()->
     table = $("<table></table>")
@@ -139,10 +138,14 @@ class Krossword
     if @grid.contains( p )
       td.html(init_char)
     else if @grid.contains( { x:x+1, y:y } )
-      td.html("rule")
+      # TODO create and insert rule
+      # td.append(rule)
+      td.addClass("rule")
     else
       td.addClass("pad")
     td
+  draw_rule: (direction,lineNo)->
+    rule = $("<span></span>").html("tule!!!!!!!!!!!")
 
 
 # exports
