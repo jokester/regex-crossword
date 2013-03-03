@@ -64,16 +64,24 @@ $was60: #{$hexwidth *60/104}
   border-left: $halfwidth solid transparent
   border-right: $halfwidth solid transparent
 
-#kgrid table
-  position: relative
+table.hextable.rot120 td
+  -webkit-transform: rotate(120deg)
+table.hextable.rot240 td
+  -webkit-transform: rotate(240deg)
+
+table.hextable
+  tr,td
+    margin: -1px
+    border: 0px
   td
+    position: relative
     width: 50px
     height: 50px
+    text-align: center
   tr:nth-child(2n)
     td
       border: 1px dotted red
   tr:nth-child(2n+1)
-    position: relative
-    left: 25px
     td
       border: 1px dotted green
+      left: 25px
