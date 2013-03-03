@@ -29,6 +29,9 @@ rotate120 = (elem) ->
   else
     elem.addClass("rot120")
 
+log = (arg...) ->
+  console.log arg...
+
 class Grid6
   # coord system
   # 3-component coord sys, as mentioned by
@@ -112,37 +115,34 @@ class Grid6
 class Krossword
   # - draw html
   # - set callback
-  # - 
-  constructor: ( @parent, @radius, rules )->
+  constructor: ( parent, @radius, rules )->
     @grid = new Grid6( @radius )
-  draw_cell: (x, y) ->
-    cellid = coor2cellid( { x:x, y:y } )
-    # idea from http://jtauber.github.com/articles/css-hexagon.html
-    new_cell =      $( "<div class='cell' id='#{cellid}'></div>" )
-    new_cell_bg =   $(   "<div   class='hex'></div>" )
-    new_cell_bg = null
-    new_cell_input= $(   "<input class='cell-input' type='text' maxlength='1' value=#{init_char} />" )
-    new_cell_text=  $(   "<span  class='cell-text'>#{init_char}</span>" )
-
-    # TODO
-    # [new_cell_bg, new_cell_input, new_cell_text]
-    # should have the same center point with new_cell
-    # HOW?
-
-    new_cell_input.hide()
-    for v in [new_cell_bg, new_cell_input, new_cell_text]
-      new_cell.append( v )
-    @parent.append(new_cell)
-
-if grid=$("#krossword-grid")
-  kross = new Krossword(grid, 5, {})
-  kross.draw_cell( 0,0 )
+    parent.append( @draw_table() )
 
 
+  draw_table: ()->
+    table = $("<table></table>")
+    for y in [ (@radius-1)  ..  -(@radius-1) ]
+      table.append( @draw_tr(y) )
+    table.addClass("hextable")
 
+  draw_tr: (y) ->
+    tr = $("<tr></tr>")
+    x_start = -(@radius-1) - Math.floor(y/2)
+    for x in [ x_start-1 .. x_start + 2*@radius-2 ]
+      tr.append( @draw_td( x, y ) )
 
-
-
+  draw_td: (x,y) ->
+    #TODO callback
+    td = $("<td></td>")
+    p = x:x, y:y
+    if @grid.contains( p )
+      td.html(init_char)
+    else if @grid.contains( { x:x+1, y:y } )
+      td.html("rule")
+    else
+      td.addClass("pad")
+    td
 
 
 # exports
@@ -150,3 +150,4 @@ if grid=$("#krossword-grid")
   coor2cellid: coor2cellid
   cellid2coor: cellid2coor
   Grid: Grid6
+  Krossword: Krossword

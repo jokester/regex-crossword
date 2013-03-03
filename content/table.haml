@@ -1,0 +1,49 @@
+!!!5
+%html
+  %head
+    %title regex-crossword
+    %link(rel="stylesheet" type="text/css" href="/style.css")
+    %script(src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js")
+  %body
+    %a(href="/test") unit test page
+    #kgrid
+      %table.hextable
+        %tr
+          %td hidden
+          %td 1-1
+          %td 1-2
+        %tr
+          %td 2-1
+          %td 2-2
+          %td 2-3
+        %tr
+          %td hidden
+          %td 3-1
+          %td 3-2
+      %table.hextable.rot120
+        %tr
+          %td hidden
+          %td 1-1
+          %td 1-2
+        %tr
+          %td 2-1
+          %td 2-2
+          %td 2-3
+        %tr
+          %td hidden
+          %td 3-1
+          %td 3-2
+      %table.hextable.rot240
+        %tr
+          %td hidden
+          %td 1-1
+          %td 1-2
+        %tr
+          %td 2-1
+          %td 2-2
+          %td 2-3
+        %tr
+          %td hidden
+          %td 3-1
+          %td 3-2
+  %script(src="crossword.js")
