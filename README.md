@@ -1,4 +1,0 @@
-word-quiz
-=========
-
-word quiz

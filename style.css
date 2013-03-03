@@ -1,0 +1,82 @@
+#krossword-grid {
+  height: 600px;
+  width: 600px;
+  border: 1px dotted red;
+  position: absolute; }
+
+#grid {
+  width: 600px; }
+
+.hidden {
+  display: none; }
+
+div.cell {
+  width: 60px;
+  height: 60px;
+  position: relative; }
+  div.cell .cell-bg, div.cell .cell-text, div.cell .cell-input {
+    position: absolute; }
+  div.cell .cell-text, div.cell .cell-input {
+    width: 0.5em;
+    text-align: left;
+    font-family: monospace;
+    font-size: 50px;
+    left: 15px; }
+
+.rot120 {
+  -webkit-transform: rotate(-120deg); }
+
+.rot240 {
+  -webkit-transform: rotate(-240deg); }
+
+.rot0 {
+  -webkit-transform: rotate(0deg); }
+
+.abs {
+  position: absolute; }
+
+.hex:before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-bottom: 17.59615px solid #66cc66;
+  border-left: 30.5px solid transparent;
+  border-right: 30.5px solid transparent;
+  position: absolute;
+  top: -17.59615px; }
+
+.hex {
+  margin-top: 17.59615px;
+  width: 61px;
+  height: 35.19231px;
+  background-color: #66cc66;
+  position: relative; }
+
+.hex:after {
+  content: "";
+  width: 0;
+  position: absolute;
+  bottom: -17.59615px;
+  border-top: 17.59615px solid #66cc66;
+  border-left: 30.5px solid transparent;
+  border-right: 30.5px solid transparent; }
+
+table.hextable.rot120 td {
+  -webkit-transform: rotate(120deg); }
+
+table.hextable.rot240 td {
+  -webkit-transform: rotate(240deg); }
+
+table.hextable tr, table.hextable td {
+  margin: -1px;
+  border: 0px; }
+table.hextable td {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  text-align: center; }
+table.hextable tr:nth-child(2n) td {
+  border: 1px dotted red; }
+table.hextable tr:nth-child(2n+1) td {
+  border: 1px dotted green;
+  left: 25px; }
