@@ -117,31 +117,24 @@ class Krossword
     @grid = new Grid6( @radius )
   draw_cell: (x, y) ->
     cellid = coor2cellid( { x:x, y:y } )
-    # idea from jtauber.github.com/articles/css-hexagon.html
+    # idea from http://jtauber.github.com/articles/css-hexagon.html
     new_cell =      $( "<div class='cell' id='#{cellid}'></div>" )
-    new_cell_bg =   $(   "<span class='cell-bg'>&#x2B22;</span>" )
+    new_cell_bg =   $(   "<div   class='hex'></div>" )
+    new_cell_bg = null
     new_cell_input= $(   "<input class='cell-input' type='text' maxlength='1' value=#{init_char} />" )
-    new_cell_text=  $(   "<span class='cell-text' type='button'>#{init_char}</span>" )
+    new_cell_text=  $(   "<span  class='cell-text'>#{init_char}</span>" )
 
-    #new_cell_input.hide()
-    v.addClass("rot120") for v in [new_cell_bg, new_cell_input, new_cell_text]
-    new_cell.append( v ) for v in [new_cell_bg, new_cell_input, new_cell_text]
+    # TODO
+    # [new_cell_bg, new_cell_input, new_cell_text]
+    # should have the same center point with new_cell
+    # HOW?
+
+    new_cell_input.hide()
+    for v in [new_cell_bg, new_cell_input, new_cell_text]
+      new_cell.append( v )
     @parent.append(new_cell)
 
-    cell_width = 60 #px
-    unless css_cache.cell
-      css_cache.cell=
-        width:  cell_width + "px"
-        height: cell_width + "px"
-    new_cell.css(css_cache.cell)
-    unless css_cache.cell_bg
-      css_cache.cell_bg=
-        "font-size": cell_width + "px"
-    new_cell_bg.css(css_cache.cell_bg)
-
-
 if grid=$("#krossword-grid")
-  rotate120(grid)
   kross = new Krossword(grid, 5, {})
   kross.draw_cell( 0,0 )
 

@@ -10,16 +10,19 @@
 .hidden
   display: none
 
+$cellwidth: 60px
 div.cell
-  position: absolute
-  font-family: monospace
-  .cell-bg
+  width: $cellwidth
+  height: $cellwidth
+  position: relative
+  .cell-bg, .cell-text, .cell-input
     position: absolute
-    color: lightblue
-  .cell-text
-    position: absolute
-  .cell-input
-    position: absolute
+  .cell-text , .cell-input
+    width: 0.5em
+    text-align: left
+    font-family: monospace
+    font-size: 50px
+    left: 15px
 
 
 .rot120
@@ -28,3 +31,35 @@ div.cell
   -webkit-transform: rotate(-240deg)
 .rot0
   -webkit-transform: rotate(0deg)
+
+$hexwidth: $cellwidth+1
+$halfwidth: #{$hexwidth /2}
+$was30: #{$hexwidth *30/104}
+$was60: #{$hexwidth *60/104}
+.abs
+  position: absolute
+.hex:before
+  content: ""
+  width: 0
+  height: 0
+  border-bottom: $was30 solid #6C6
+  border-left: $halfwidth solid transparent
+  border-right: $halfwidth solid transparent
+  position: absolute
+  top: -$was30
+
+.hex
+  margin-top: $was30
+  width: $hexwidth
+  height: $was60
+  background-color: #6C6
+  position: relative
+
+.hex:after
+  content: ""
+  width: 0
+  position: absolute
+  bottom: -$was30
+  border-top: $was30 solid #6C6
+  border-left: $halfwidth solid transparent
+  border-right: $halfwidth solid transparent
