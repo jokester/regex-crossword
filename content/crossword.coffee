@@ -8,8 +8,8 @@ cellid_regex = /^cell_(-?\d+)_(-?\d+)$/
 cellid2coor = (id)->
   match = cellid_regex.exec(id)
   if match
-    x: parseInt(match[1])
-    y: parseInt(match[2])
+    x: parseInt(match[1]) or throw "invalid x"
+    y: parseInt(match[2]) or throw "invalid y"
   else
     throw "invalid cellid"
 
@@ -127,25 +127,36 @@ class Krossword
 
   draw_tr: (y) ->
     tr = $("<tr></tr>")
-    x_start = -(@radius-1) - Math.floor(y/2)
-    for x in [ x_start-1 .. x_start + 2*@radius-2 ]
+    x_start = # TODO a more general expression
+      if 0 == @radius%2
+        -(@radius-1) - Math.ceil(y/2)
+      else
+        -(@radius-1) - Math.floor(y/2)
+
+    for x in [ x_start .. x_start + 2*(@radius-1) ]
       tr.append( @draw_td( x, y ) )
 
   draw_td: (x,y) ->
     #TODO callback
     td = $("<td></td>")
+    td.html("#{x},#{y}")
     p = x:x, y:y
     if @grid.contains( p )
-      td.html(init_char)
-    else if @grid.contains( { x:x+1, y:y } )
-      # TODO create and insert rule
-      # td.append(rule)
-      td.addClass("rule")
+      log? p, "in"
+      #td.html(init_char)
+      #else if @grid.contains( { x:x+1, y:y } )
+      #  # TODO create and insert rule
+      #  # td.append(rule)
+      #  td.addClass("rule")
+      td.addClass("not-pad")
     else
+      log? p, "OUT"
       td.addClass("pad")
+    if x==0 and y==0
+      td.append( @draw_rule_set() )
     td
-  draw_rule: (direction,lineNo)->
-    rule = $("<span></span>").html("tule!!!!!!!!!!!")
+  draw_rule_set: (direction,lineNo)->
+    rule = $("<span></span>").html("!")
 
 
 # exports
