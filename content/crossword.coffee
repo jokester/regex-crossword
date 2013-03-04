@@ -32,6 +32,8 @@ rotate120 = (elem) ->
 log = (arg...) ->
   console.log arg...
 
+compareNum = (a,b) -> a-b
+
 class Grid6
   # coord system
   # 3-component coord sys, as mentioned by
@@ -115,34 +117,45 @@ class Grid6
 class Krossword
   # - draw html
   # - set callback
-  constructor: ( parent, @radius, @rules )->
+  constructor: ( @parent, @radius, @rules )->
     @grid = new Grid6( @radius )
+    @dom_elem =
+      rules: {}     # lineno
     parent.append( @draw_table() )
+
+  enum_coord: ()->
+    ret = {}        # { y: [x] }     # not as y, x is sorted
+    for y in [ (@radius)  ..  -(@radius) ]
+      x_start = # TODO a more general expression
+        if 0 == @radius%2
+          -(@radius-1) - Math.floor(y/2)
+        else
+          -(@radius-1) - Math.ceil(y/2)
+      ret[y] = [ x_start-1 .. x_start + 2*(@radius-1) ]
+    return ret
 
   draw_table: ()->
     table = $("<table></table>")
-    for y in [ (@radius-1)  ..  -(@radius-1) ]
-      table.append( @draw_tr(y) )
+    coords = @enum_coord()
     table.addClass("hextable")
+    ys = Object.keys(coords).map((k)->parseInt(k)).sort(compareNum).reverse()
+      # screw js, Array.sort() compares string by default
+    console.log(ys)
+    for y in ys
+      table.append( @draw_tr(y, coords[y] ))
 
-  draw_tr: (y) ->
+  draw_tr: (y,xs) ->
     tr = $("<tr></tr>")
-    x_start = # TODO a more general expression
-      if 0 == @radius%2
-        -(@radius-1) - Math.ceil(y/2)
-      else
-        -(@radius-1) - Math.floor(y/2)
-
-    for x in [ x_start .. x_start + 2*(@radius-1) ]
+    for x in xs
       tr.append( @draw_td( x, y ) )
+    tr
 
   draw_td: (x,y) ->
     #TODO callback
     td = $("<td></td>")
-    td.html("#{x},#{y}")
     p = x:x, y:y
     if @grid.contains( p )
-      log? p, "in"
+      td.html("#{x},#{y}")
       #td.html(init_char)
       #else if @grid.contains( { x:x+1, y:y } )
       #  # TODO create and insert rule
@@ -150,11 +163,12 @@ class Krossword
       #  td.addClass("rule")
       td.addClass("not-pad")
     else
-      log? p, "OUT"
+    else
       td.addClass("pad")
     if x==0 and y==0
       td.append( @draw_rule_set() )
     td
+
   draw_rule_set: (direction,lineNo)->
     rule = $("<span></span>").html("!")
 

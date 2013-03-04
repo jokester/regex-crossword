@@ -10,65 +10,8 @@
 .hidden
   display: none
 
-$cellwidth: 60px
-div.cell
-  width: $cellwidth
-  height: $cellwidth
-  position: relative
-  .cell-bg, .cell-text, .cell-input
-    position: absolute
-  .cell-text , .cell-input
-    width: 0.5em
-    text-align: left
-    font-family: monospace
-    font-size: 50px
-    left: 15px
-
-
-.rot120
-  -webkit-transform: rotate(-120deg)
-.rot240
-  -webkit-transform: rotate(-240deg)
-.rot0
-  -webkit-transform: rotate(0deg)
-
-$hexwidth: $cellwidth+1
-$halfwidth: #{$hexwidth /2}
-$was30: #{$hexwidth *30/104}
-$was60: #{$hexwidth *60/104}
-.abs
-  position: absolute
-.hex:before
-  content: ""
-  width: 0
-  height: 0
-  border-bottom: $was30 solid #6C6
-  border-left: $halfwidth solid transparent
-  border-right: $halfwidth solid transparent
-  position: absolute
-  top: -$was30
-
-.hex
-  margin-top: $was30
-  width: $hexwidth
-  height: $was60
-  background-color: #6C6
-  position: relative
-
-.hex:after
-  content: ""
-  width: 0
-  position: absolute
-  bottom: -$was30
-  border-top: $was30 solid #6C6
-  border-left: $halfwidth solid transparent
-  border-right: $halfwidth solid transparent
-
-table.hextable.rot120 td
-  -webkit-transform: rotate(120deg)
-table.hextable.rot240 td
-  -webkit-transform: rotate(240deg)
-
+$word_cell_width: 50px
+$rule_cell_width: 100px
 table.hextable
   td.pad
     border: none !important
@@ -77,11 +20,11 @@ table.hextable
     content: "/"
   td
     position: relative
-    width: 50px
-    height: 50px
+    width: $word_cell_width
+    height: $word_cell_width
     text-align: center
   tr:nth-child(2n) td
     border: 1px dotted red
-    left: 25px
+    left: #{$word_cell_width/2}
   tr:nth-child(2n+1) td
     border: 1px dotted green
