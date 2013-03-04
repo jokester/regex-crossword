@@ -63,35 +63,23 @@ class Grid6
   #               <1,0>  -- <0,1>   has direction="\", lineno=0
   #
   constructor: (@radius) ->
-    @cells = {}   # { x: { y: char } }
-    @rules =   # { direction: { lineno: callback } }
-      "-" : {}
-      "/" : {}
-      "\\": {}
-    for x in [ -@radius .. +@radius ]
-      for y in [ -@radius .. +@radius ]
-        @set_cell(x,y,"?") if @contains( {x:x,y:y} )
+    @line_cb =
+      "-" :{}
+      "\\":{}
+      "/" :{}
 
   when_changed: (@cb)->
 
   when_line_changed: ( direction, lineno, cb ) =>
-    @rules[direction][lineno] = cb
+    @line_cb[direction][lineno] = cb
 
   line_changed: (direction, lineno)=>
-    cb = @rules[direction][lineno]
+    cb = @line_cb[direction][lineno]
     cb(direction,lineno) if cb
     @cb(direction,lineno) if @cb
 
-  set_cell: (x,y,char) =>
-    @cells[x] = @cells[x] or {}
-    @cells[x][y] = char
-  get_cell: (x,y) =>
-    @cells[x][y]
-
   change_cell: (cellid,char) =>
     p = cellid2coor(cellid)
-    return if char == @get_cell(p.x,p.y)
-    @set_cell( p.x, p.y, char )
     for direction in legal_directions
       @line_changed( direction, @lineNo(direction,p) )
 
@@ -120,9 +108,6 @@ class Grid6
       when "/"  then (v)->{x:-lineNo, y:-v }
     steps = @radius-Math.abs(lineNo)+1
     (p for p in [ -steps .. +steps ].map( new_point ) when @contains(p) )
-
-  lineStr: (direction, lineNo) =>
-    (@get_cell(p.x,p.y) for p in @line(direction,lineNo) ).join("")
 
 class Krossword
   # - draw html
