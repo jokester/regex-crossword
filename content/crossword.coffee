@@ -109,25 +109,30 @@ class Grid6
     steps = @radius-Math.abs(lineNo)+1
     (p for p in [ -steps .. +steps ].map( new_point ) when @contains(p) )
 
+  rotate: (p) =>
+    x: -(p.x+p.y)
+    y: p.x
+
+
 class Krossword
   # - draw html
   # - set callback
-  constructor: ( @parent, @radius, @rules )->
+  constructor: ( @parent, @radius, rules )->
 
     @grid = grid = new Grid6( @radius )
-    rules_compiled = @compile_rule( rules )
+    @rules = rules
 
     grid.when_changed (direction,lineNo)->
       points = grid.line(direction,lineNo)
       str = points.map( char_at ).join("")
       rule = $("##{rule2id(direction,lineNo)}")
-      if rules_compiled[direction][lineNo].exec(str)
+      regex = new RegExp("^#{rule.text()}$")
+      if regex.exec(str)
         rule.addClass("matched")
       else
         rule.removeClass("matched")
 
-
-    @callback_cell_click = ->
+    @callback_cell_click = (td)->
       return if @changing
       @changing = true
 
@@ -146,13 +151,17 @@ class Krossword
       input.focus()
 
     parent.append( @draw_table() )
+    $("#control").append @draw_button "clockwise",()=>
+      @rotate true
+    $("#control").append @draw_button "counter",()=>
+      @rotate false
 
   compile_rule: (rules)->
     compiled = {}
     for direction, lines of rules
       compiled[direction] = {}
       for lineNo, regex of lines
-        compiled[direction][lineNo] = new RegExp("^#{regex}$")
+        compiled[direction][lineNo] = new RegExp("^#{regex}$" or "")
     return compiled
 
   enum_coord: ()->
@@ -164,15 +173,14 @@ class Krossword
         else
           -(@radius-1) - Math.ceil(y/2)
       ret[y] = [ x_start-1 .. x_start + 2*(@radius-1)+1 ]
+    ret.ys = [ (@radius)  ..  -(@radius) ]
     return ret
 
   draw_table: ()->
     table = $("<table></table>")
     coords = @enum_coord()
     table.addClass("hextable")
-    ys = Object.keys(coords).map((k)->parseInt(k)).sort(compareNum).reverse()
-      # screw js, Array.sort() compares string by default
-    for y in ys
+    for y in coords.ys
       table.append( @draw_tr(y, coords[y] ))
 
   draw_tr: (y,xs) ->
@@ -217,7 +225,62 @@ class Krossword
       .html( @rules[direction][lineNo] )
     rule_parent.append(rule_text)
 
-# exports
+  draw_button : (text,cb)->
+    $("<button>").html(text).on "click",cb
+
+  rotate: (clockwise)->
+    @rotate_cell clockwise
+    @rotate_rules clockwise
+
+  rotate_cell: (clockwise)->
+    for x in [ 0 .. @radius-1 ]
+      for y in [ -(x-1) .. @radius-1 ]
+        a = x:x, y:y
+        if @grid.contains( a )
+          b = @grid.rotate(a)
+          c = @grid.rotate(b)
+          ids = ("##{coor2cellid(p)}" for p in [a,b,c])
+          ids.reverse() if clockwise
+          @exchange3cells( ids ... )
+
+  rotate_rules: (clockwise)->
+    directions = legal_directions.slice(0)
+    directions.reverse() if clockwise
+    for lineNo in [ -(@radius-1) .. +(@radius-1) ]
+      @exchange3rules lineNo, directions
+
+  exchange3cells: (a,b,c)->
+    #  a>b, b>c, c>a
+    a=$(a)
+    b=$(b)
+    c=$(c)
+    ta=a.text()
+    tb=b.text()
+    tc=c.text()
+    a.text(tc).attr( char: tc )
+    c.text(tb).attr( char: tb )
+    b.text(ta).attr( char: ta )
+
+  exchange3rules: (lineNo, directions) ->
+    cache = {}
+    for dir in directions
+      id = "#" + rule2id(dir,lineNo)
+      elem = $(id)
+      cache[dir] =
+        id: id
+        elem: elem
+        text: elem.text()
+        matched: elem.hasClass("matched")
+    for dir,old_index in directions
+      new_dir = directions[old_index+1] or directions[0]
+      new_elem = cache[new_dir].elem
+      old = cache[dir]
+      new_elem.text( old.text      )
+      if old.matched
+        new_elem.addClass("matched")
+      else
+        new_elem.removeClass("matched")
+
 @crossword =
   coor2cellid: coor2cellid
   cellid2coor: cellid2coor
