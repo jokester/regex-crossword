@@ -1,31 +1,55 @@
-#krossword-grid
-  height: 600px
-  width:  600px
-  border: 1px dotted red
-  position: absolute
+.html, .body
 
-#grid
-  width: 600px
+$word_cell_width: 3em
+$rule_cell_width: 5em
+
+#kgrid
+  position: relative
+  top: #{$rule_cell_width*0.866 } // sqrt(3)/2
+  left: $rule_cell_width
+
 
 .hidden
   display: none
 
-$word_cell_width: 50px
-$rule_cell_width: 100px
 table.hextable
-  td.empty
-    border: none !important
-    background-color: white !important
+  font-family: monospace
+  font-size: 16px
+  td.inuse
+    background-color: lightgreen
+  td.padding
   td.rule
-    border: none !important
-    background-color: lightblue !important
+    //background-color: lightblue
   td
     position: relative
     width: $word_cell_width
     height: $word_cell_width
     text-align: center
   tr:nth-child(2n) td
-    border: 1px dotted red
     left: #{$word_cell_width/2}
-  tr:nth-child(2n+1) td
-    border: 1px dotted green
+  //tr:nth-child(2n+1) td
+
+.rule_parent
+  position: absolute
+  span.rule_text:before
+    color: #aaa
+    content: "/"
+  span.rule_text:after
+    color: #aaa
+    content: "/→"
+
+.deg0 .rule_parent
+  right: 0px
+.deg120 .rule_parent
+  top: 0px
+  left: -0.3em
+  -webkit-transform: rotate(240deg)
+.deg240 .rule_parent
+  bottom: 0px
+  -webkit-transform: rotate(120deg)
+
+.rule_text
+  position: absolute
+  white-space: pre
+  right: 0px
+  top: -0.5em

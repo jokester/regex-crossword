@@ -119,8 +119,11 @@ class Krossword
   # - set callback
   constructor: ( @parent, @radius, @rules )->
     @grid = new Grid6( @radius )
-    @dom_elem =
-      rules: {}     # lineno
+    @dom_elem = {}
+    for direction in legal_directions
+      @dom_elem[direction] =
+        rule: {}    # { lineNo : dom }
+    @current_direction = "-"
     parent.append( @draw_table() )
 
   enum_coord: ()->
@@ -150,35 +153,35 @@ class Krossword
     tr
 
   draw_td: (x,y) ->
-    #TODO callback
     td = $("<td></td>")
-
     if @grid.contains( x:x, y:y )
       td
+        .addClass("inuse")
         .append @draw_cell(x,y)
     else if @grid.contains( x:x+1, y:y )
       td
-        .addClass("rule")
+        .addClass("rule deg0")
         .append @draw_rule(x,y,"-",-y)
     else if @grid.contains( x:x, y:y-1 )
       td
-        .addClass("rule")
+        .addClass("rule deg240")
         .append @draw_rule(x,y,"/",-x)
     else if @grid.contains( x:x-1, y:y+1 )
       td
-        .addClass("rule")
+        .addClass("rule deg120")
         .append @draw_rule(x,y,"\\",x+y)
     else
       td
-        .addClass("empty")
+        .addClass("padding")
     return td
+
   draw_cell: (x,y)->
-    $("<span>").html("#{x},#{y}")
+    $("<span>").html(init_char)
 
   draw_rule: (x,y,direction,lineNo)->
     check_direction( direction )
-    rule_parent = $("<div>")
-    rule_text = $("<span>").html "#{direction},#{lineNo}"
+    rule_parent = $("<div>").addClass("rule_parent")
+    rule_text = $("<span>").addClass("rule_text").html "RULE#{direction},#{lineNo} 333"
     rule_parent.append(rule_text)
 
 # exports
