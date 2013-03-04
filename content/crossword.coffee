@@ -131,7 +131,7 @@ class Krossword
           -(@radius-1) - Math.floor(y/2)
         else
           -(@radius-1) - Math.ceil(y/2)
-      ret[y] = [ x_start-1 .. x_start + 2*(@radius-1) ]
+      ret[y] = [ x_start-1 .. x_start + 2*(@radius-1)+1 ]
     return ret
 
   draw_table: ()->
@@ -140,7 +140,6 @@ class Krossword
     table.addClass("hextable")
     ys = Object.keys(coords).map((k)->parseInt(k)).sort(compareNum).reverse()
       # screw js, Array.sort() compares string by default
-    console.log(ys)
     for y in ys
       table.append( @draw_tr(y, coords[y] ))
 
@@ -153,25 +152,34 @@ class Krossword
   draw_td: (x,y) ->
     #TODO callback
     td = $("<td></td>")
-    p = x:x, y:y
-    if @grid.contains( p )
-      td.html("#{x},#{y}")
-      #td.html(init_char)
-      #else if @grid.contains( { x:x+1, y:y } )
-      #  # TODO create and insert rule
-      #  # td.append(rule)
-      #  td.addClass("rule")
-      td.addClass("not-pad")
-    else
-    else
-      td.addClass("pad")
-    if x==0 and y==0
-      td.append( @draw_rule_set() )
-    td
 
-  draw_rule_set: (direction,lineNo)->
-    rule = $("<span></span>").html("!")
+    if @grid.contains( x:x, y:y )
+      td
+        .append @draw_cell(x,y)
+    else if @grid.contains( x:x+1, y:y )
+      td
+        .addClass("rule")
+        .append @draw_rule(x,y,"-",-y)
+    else if @grid.contains( x:x, y:y-1 )
+      td
+        .addClass("rule")
+        .append @draw_rule(x,y,"/",-x)
+    else if @grid.contains( x:x-1, y:y+1 )
+      td
+        .addClass("rule")
+        .append @draw_rule(x,y,"\\",x+y)
+    else
+      td
+        .addClass("empty")
+    return td
+  draw_cell: (x,y)->
+    $("<span>").html("#{x},#{y}")
 
+  draw_rule: (x,y,direction,lineNo)->
+    check_direction( direction )
+    rule_parent = $("<div>")
+    rule_text = $("<span>").html "#{direction},#{lineNo}"
+    rule_parent.append(rule_text)
 
 # exports
 @crossword =

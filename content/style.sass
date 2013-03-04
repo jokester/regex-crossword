@@ -13,11 +13,12 @@
 $word_cell_width: 50px
 $rule_cell_width: 100px
 table.hextable
-  td.pad
+  td.empty
     border: none !important
     background-color: white !important
-  td.rule:after, td.rule:before
-    content: "/"
+  td.rule
+    border: none !important
+    background-color: lightblue !important
   td
     position: relative
     width: $word_cell_width
