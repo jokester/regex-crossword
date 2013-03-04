@@ -130,15 +130,23 @@ class Krossword
   constructor: ( @parent, @radius, @rules )->
 
     @grid = grid = new Grid6( @radius )
+    rules_compiled = @compile_rule( rules )
+
     grid.when_changed (direction,lineNo)->
       points = grid.line(direction,lineNo)
       str = points.map( char_at ).join("")
+      rule = $("##{rule2id(direction,lineNo)}")
+      if rules_compiled[direction][lineNo].exec(str)
+        rule.addClass("matched")
+      else
+        rule.removeClass("matched")
+
 
     @callback_cell_click = ->
       return if @changing
       @changing = true
 
-      input = $("<input>").attr({type:"text", maxlength:1, value: @char})
+      input = $("<input>").attr({type:"text", maxlength:1, value: $(@).attr("char")})
 
       change_done = =>
         new_char = input.val()
@@ -153,6 +161,14 @@ class Krossword
       input.focus()
 
     parent.append( @draw_table() )
+
+  compile_rule: (rules)->
+    compiled = {}
+    for direction, lines of rules
+      compiled[direction] = {}
+      for lineNo, regex of lines
+        compiled[direction][lineNo] = new RegExp("^#{regex}$")
+    return compiled
 
   enum_coord: ()->
     ret = {}        # { y: [x] }     # not as y, x is sorted
