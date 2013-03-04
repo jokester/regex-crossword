@@ -1,13 +1,12 @@
 .html, .body
 
-$word_cell_width: 3em
-$rule_cell_width: 5em
+$word_cell_width: 2em
+$rule_cell_width: 6em
 
 #kgrid
   position: relative
   top: #{$rule_cell_width*0.866 } // sqrt(3)/2
   left: $rule_cell_width
-
 
 .hidden
   display: none
@@ -16,6 +15,9 @@ table.hextable
   font-family: monospace
   font-size: 16px
   td.inuse
+    input
+      width: 1em
+      text-align: center
     background-color: lightgreen
   td.padding
   td.rule
@@ -31,12 +33,6 @@ table.hextable
 
 .rule_parent
   position: absolute
-  span.rule_text:before
-    color: #aaa
-    content: "/"
-  span.rule_text:after
-    color: #aaa
-    content: "/→"
 
 .deg0 .rule_parent
   right: 0px
@@ -48,8 +44,16 @@ table.hextable
   bottom: 0px
   -webkit-transform: rotate(120deg)
 
+.rule_text.matched
+  color: #aaa
 .rule_text
   position: absolute
   white-space: pre
   right: 0px
   top: -0.5em
+.rule_text:before
+  color: #aaa
+  content: "/"
+.rule_text:after
+  color: #aaa
+  content: "/→"

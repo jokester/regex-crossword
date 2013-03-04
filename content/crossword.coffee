@@ -8,14 +8,21 @@ cellid_regex = /^cell_(-?\d+)_(-?\d+)$/
 cellid2coor = (id)->
   match = cellid_regex.exec(id)
   if match
-    x: parseInt(match[1]) or throw "invalid x"
-    y: parseInt(match[2]) or throw "invalid y"
+    x: parseInt(match[1])
+    y: parseInt(match[2])
   else
     throw "invalid cellid"
+char_at = (p)->
+  $($("##{coor2cellid(p)}")[0]).attr("char")
 
 legal_directions = ["-","\\","/"]
 check_direction = (dir)->
   dir in legal_directions or throw "illegal direction:#{dir}"
+
+rule2id = (direction,lineNo)->
+  "rule_#{legal_directions.indexOf(direction)}_#{lineNo}"
+next_direction = (direction)->
+  legal_directions[ ( legal_directions.indexOf(direction)+1 )%3 ]
 
 init_char="?"
 css_cache={}
@@ -30,7 +37,7 @@ rotate120 = (elem) ->
     elem.addClass("rot120")
 
 log = (arg...) ->
-  console.log arg...
+  true and console.log arg...
 
 compareNum = (a,b) -> a-b
 
@@ -65,12 +72,15 @@ class Grid6
       for y in [ -@radius .. +@radius ]
         @set_cell(x,y,"?") if @contains( {x:x,y:y} )
 
+  when_changed: (@cb)->
+
   when_line_changed: ( direction, lineno, cb ) =>
     @rules[direction][lineno] = cb
 
   line_changed: (direction, lineno)=>
     cb = @rules[direction][lineno]
     cb(direction,lineno) if cb
+    @cb(direction,lineno) if @cb
 
   set_cell: (x,y,char) =>
     @cells[x] = @cells[x] or {}
@@ -118,12 +128,30 @@ class Krossword
   # - draw html
   # - set callback
   constructor: ( @parent, @radius, @rules )->
-    @grid = new Grid6( @radius )
-    @dom_elem = {}
-    for direction in legal_directions
-      @dom_elem[direction] =
-        rule: {}    # { lineNo : dom }
-    @current_direction = "-"
+
+    @grid = grid = new Grid6( @radius )
+    grid.when_changed (direction,lineNo)->
+      points = grid.line(direction,lineNo)
+      str = points.map( char_at ).join("")
+
+    @callback_cell_click = ->
+      return if @changing
+      @changing = true
+
+      input = $("<input>").attr({type:"text", maxlength:1, value: @char})
+
+      change_done = =>
+        new_char = input.val()
+        if @char isnt new_char
+          $(@).attr(char: new_char)
+          $(@).html(new_char)
+          grid.change_cell(@id, new_char)
+        @changing = false
+
+      input.on "focusout", change_done
+      $(@).html(input)
+      input.focus()
+
     parent.append( @draw_table() )
 
   enum_coord: ()->
@@ -157,7 +185,10 @@ class Krossword
     if @grid.contains( x:x, y:y )
       td
         .addClass("inuse")
-        .append @draw_cell(x,y)
+        .attr("id", coor2cellid(x:x, y:y))
+        .attr("char", init_char )
+        .on("click", @callback_cell_click)
+        .html(init_char)
     else if @grid.contains( x:x+1, y:y )
       td
         .addClass("rule deg0")
@@ -175,13 +206,14 @@ class Krossword
         .addClass("padding")
     return td
 
-  draw_cell: (x,y)->
-    $("<span>").html(init_char)
-
   draw_rule: (x,y,direction,lineNo)->
     check_direction( direction )
-    rule_parent = $("<div>").addClass("rule_parent")
-    rule_text = $("<span>").addClass("rule_text").html( @rules[direction][lineNo])
+    rule_parent = $("<div>")
+      .addClass("rule_parent")
+    rule_text = $("<span>")
+      .addClass("rule_text")
+      .attr( "id", rule2id(direction,lineNo) )
+      .html( @rules[direction][lineNo] )
     rule_parent.append(rule_text)
 
 # exports
