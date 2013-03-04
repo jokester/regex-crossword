@@ -181,7 +181,7 @@ class Krossword
   draw_rule: (x,y,direction,lineNo)->
     check_direction( direction )
     rule_parent = $("<div>").addClass("rule_parent")
-    rule_text = $("<span>").addClass("rule_text").html "RULE#{direction},#{lineNo} 333"
+    rule_text = $("<span>").addClass("rule_text").html( @rules[direction][lineNo])
     rule_parent.append(rule_text)
 
 # exports
